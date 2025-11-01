@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Ceci est le TP nôté WEB TEMPS REEL - ESGI 5eme année 2025/2026</title>
+    <script defer type="module" src="./index.ts"></script>
+</head>
+<body>
+
+
+<main>
+    <h1>TP Web Temps Réel</h1>
+
+    <form id="form">
+        <label for="message"> Message :
+        <input id="message" type="text">
+        </label>
+
+        <button type="submit">Envoyer</button>
+    </form>
+
+
+    <div style="display: flex; gap: 12px; flex-direction: column; margin-top: 12px" class="container">
+        <div id="polling" style="display: flex; flex-direction: column; border: 1px solid black; background: azure; padding: 4px 12px;">
+            <h2>Polling</h2>
+            <ul id="polling-messages"></ul>
+        </div>
+        <div id="long-polling" style="display: flex; flex-direction: column; border: 1px solid black; background: azure; padding: 4px 12px;">
+            <h2>Long Polling</h2>
+            <ul id="long-polling-messages"></ul>
+        </div>
+        <div id="sse" style="display: flex; flex-direction: column; border: 1px solid black; background: azure; padding: 4px 12px;">
+            <h2>SSE</h2>
+            <ul id="sse-messages"></ul>
+        </div>
+    </div>
+
+</main>
+
+
+</body>
+</html>
