@@ -1,8 +1,33 @@
-const pollingContainer = document.getElementById('pollingContainer') as HTMLUListElement;
-const pollingTime = 5000 // 5 secondes
+const pollingContainer = document.getElementById('polling-messages') as HTMLUListElement;
+const pollingTime = 5000;
 
-// TODO -  Récupérer les messages via POLLING puis ajouter les NOUVEAUX messages dans pollingContainer.
-// TODO - Le faire toutes les 5 secondes
+let messages: string[] = [];
+
 async function fetchPollingMessages() {
+    try {
+        const response = await fetch("http://localhost:4000/polling/messages");
+        const newMessages = await response.json();
 
+        const uniqueMessages = newMessages.filter((message: string) =>
+            !messages.includes(message)
+        );
+
+        if (uniqueMessages.length > 0) {
+            messages.push(...uniqueMessages);
+            displayPollingMessages(uniqueMessages);
+        }
+    } catch (error) {
+        console.error('Erreur polling:', error);
+    }
 }
+
+function displayPollingMessages(newMessages: string[]) {
+    newMessages.forEach(message => {
+        const li = document.createElement('li');
+        li.textContent = message;
+        pollingContainer?.appendChild(li);
+    });
+}
+
+fetchPollingMessages();
+setInterval(fetchPollingMessages, pollingTime);

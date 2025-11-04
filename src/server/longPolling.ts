@@ -1,20 +1,34 @@
-import {messages} from "./messagesStore";
+import { EventEmitter } from "events";
 import type { Express, Response } from "express";
 
 let waitingNewMessages: Response[] = [];
+const eventEmitter = new EventEmitter();
 
 export function setupLongPollingRoutes(app: Express) {
-    // TODO Renvoyer la liste des NOUVEAUX messages via la route /long-polling/messages
+    app.get("/long-polling/messages", (req, res) => {
+        const listener = (message: string) => {
+            res.json([message]);
+            eventEmitter.off("newMessage", listener);
+            
+            const index = waitingNewMessages.indexOf(res);
+            if (index > -1) {
+                waitingNewMessages.splice(index, 1);
+            }
+        };
 
-    // TODO - Implémenter le long polling.
-    // TODO - Garder la connexion ouverte tant qu'on n'a pas de nouveau message
-    // TODO - Stocker la connexion dans : waitingNewMessages
+        eventEmitter.on("newMessage", listener);
+        waitingNewMessages.push(res);
 
+        req.on("close", () => {
+            eventEmitter.off("newMessage", listener);
+            const index = waitingNewMessages.indexOf(res);
+            if (index > -1) {
+                waitingNewMessages.splice(index, 1);
+            }
+        });
+    });
 }
 
-
-// TODO - Implémenter cette fonction qui permettera de renvoyer la reponse au client dès la reception d'un message
-// TODO - Appeler cette fonction là ou il faut lorsqu'un nouveau message arrive
-export function notifyLongPollingRoutes(message: String) {
-
+export function notifyLongPollingRoutes(message: string) {
+    eventEmitter.emit("newMessage", message);
 }
